@@ -72,7 +72,8 @@ async function fetchGoogleSheet(sheetUrl, apiKey, sheetName) {
 async function initializeDashboard() {
     const sheetUrl = localStorage.getItem('spreadsheetUrl');
     const apiKey = localStorage.getItem('apiKey');
-    const sugestKey = document.getElementById('sugestKey').value;
+    const sugestKey = localStorage.getItem('sugestKey');
+   
 
     if (!sheetUrl || !apiKey) {
         alert("Por favor, insira a URL da planilha e a API Key.");
@@ -88,10 +89,13 @@ async function initializeDashboard() {
         }
 
         const data = await fetchGoogleSheet(sheetUrl, apiKey, sheetNames[0]);
+        const helpChatGPT = data[0]
+        console.log('recupera daqui: ',helpChatGPT)
         mockData = data;
         log("Dados recuperados", mockData);
         mapKeys(mockData)
         updateDashboard();
+        updateCharts()
     } catch (error) {
         console.error("Erro na inicialização do dashboard:", error.message);
     }
@@ -129,6 +133,7 @@ loginForm.addEventListener('submit', function (e) {
     const spreadsheetUrl = document.getElementById('spreadsheetUrl').value;
     const apiKey = document.getElementById('apiKey').value;
     const sugestKey = document.getElementById('sugestKey').value;
+    console.log('estou passando minha sugestão', sugestKey)
     alert("alo")
     // Salvar os dados no localStorage
     localStorage.setItem('spreadsheetUrl', spreadsheetUrl);
@@ -239,97 +244,35 @@ function assignColors(items, colorMap) {
 }
 
 // essa função deve ser integrada com um retorno do chat gpt, pra ser concatenado e gerado um custom grafico pra qualquer entrada .... 
+// html coringa:     const ctxRegion = document.getElementById("salesByRegionChart").getContext("2d");
+
 function updateCharts() {
-    // Vendas por Região
-    const salesByRegion = filteredData.reduce((acc, item) => {
-        if (!acc[item.ID_REGIAO]) {
-            acc[item.ID_REGIAO] = { label: item.REGIAO, id: item.ID_REGIAO, value: 0 };
-        }
-        acc[item.ID_REGIAO].value += item.SUBTOTAL;
-        return acc;
-    }, {});
+  
+    const newChartData = JSON.parse(localStorage.getItem('sugestKey'));
+    if (newChartData) {
+        const { labels, datasets, options } = newChartData;
+        console.log("Essas coisas existem? ", labels, datasets, options);
 
-    const regionEntries = Object.values(salesByRegion).sort((a, b) => b.value - a.value);
-    const regionLabels = regionEntries.map(entry => entry.label);
-    const regionData = regionEntries.map(entry => entry.value);
-
-    assignColors(regionLabels, regionColors);
-    const regionColorsArray = regionLabels.map(label => regionColors[label]);
-
-    if (salesByRegionChart) {
-        salesByRegionChart.destroy();
+        const ctx = document.getElementById("salesByRegionChart").getContext("2d");
+        console.log ("labels existem ou só naquele escopo ?", labels)
+        window.salesChart = new Chart(ctx, {
+            type: 'bar', 
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: options
+        });
+    } else {
+        console.log("Nenhum dado encontrado no localStorage.");
+    }
+    console.log("essas coisas existem ? ",labels, datasets, options )
+    if (window.salesChart) {
+        window.salesChart.destroy();
     }
 
-    const ctxRegion = document.getElementById("salesByRegionChart").getContext("2d");
-
-    salesByRegionChart = new Chart(ctxRegion, {
-        type: 'bar',
-        data: {
-            labels: regionLabels,
-            datasets: [{
-                label: 'Vendas por Região',
-                data: regionData,
-                backgroundColor: regionColorsArray,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        autoSkip: true
-                    }
-                },
-                y: {
-                    beginAtZero: true
-                }
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeInOutQuad'
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
-                            return label;
-                        }
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Label do data',
-                    font: {
-                        size: 18
-                    }
-                },
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: {
-                        fontSize: 14,
-                        boxWidth: 20
-                    }
-                }
-            },
-            onClick: (e, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const region = regionEntries[index];
-                    toggleFilter('regions', region.id);
-                }
-            }
-        }
-    });
 }
+
 
 function toggleFilter(type, id) {
     if (appliedFilters[type].includes(id)) {
