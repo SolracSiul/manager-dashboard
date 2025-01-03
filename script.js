@@ -68,7 +68,7 @@ async function fetchGoogleSheet(sheetUrl, apiKey, sheetName) {
         }, {});
     });
 }
-/*
+
 async function initializeDashboard() {
     const sheetUrl = localStorage.getItem('spreadsheetUrl');
     const apiKey = localStorage.getItem('apiKey');
@@ -96,7 +96,7 @@ async function initializeDashboard() {
         console.error("Erro na inicialização do dashboard:", error.message);
     }
 }
-*/
+
 
 function updateDashboard() {
     filteredData = [...mockData]; 
@@ -122,7 +122,6 @@ const salesBySellerContainer = document.getElementById("salesBySellerContainer")
 const loginForm = document.getElementById('loginForm')
 
 //Google console;
-//AIzaSyDye_K10qNpqTDTvteQCcXVgddeqTtKHI4 
 loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -239,7 +238,7 @@ function assignColors(items, colorMap) {
     });
 }
 
-// essa queridinha manda em tudo;
+// essa função deve ser integrada com um retorno do chat gpt, pra ser concatenado e gerado um custom grafico pra qualquer entrada .... 
 function updateCharts() {
     // Vendas por Região
     const salesByRegion = filteredData.reduce((acc, item) => {
@@ -407,28 +406,25 @@ function updatePagination() {
 //exporttar via csv.(passar mappedKey parara csvData.push)
 document.getElementById("exportButton").addEventListener("click", () => {
     const csvData = [];
-    csvData.push(["ID Pedido", "Produto", "Marca", "Quantidade", "Preço de Venda", "Subtotal"]);
+    csvData.push(mappedKeys);  
     filteredData.forEach(item => {
-        csvData.push([
-            item.ID_PEDIDO,
-            item.PRODUTO,
-            item.MARCA,
-            item.QUANTIDADE,
-            item.PRECO_VENDA,
-            item.SUBTOTAL
-        ]);
+        const row = mappedKeys.map(key => item[key]);
+        csvData.push(row);
     });
+
     const csvContent = "data:text/csv;charset=utf-8," 
         + csvData.map(e => e.join(",")).join("\n");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "dados_vendas.csv");
+    link.setAttribute("download", "data.csv");
     document.body.appendChild(link);
     link.click();
 
     log("Data exported", csvData);
 });
+
 
 
 
@@ -446,7 +442,7 @@ function enableInteractions() {
 
   
 // Carregar gráficos inicialmente vazios
-//initializeCharts();
+initializeCharts();
 
 window.addEventListener("resize", () => {
     updateCharts();
