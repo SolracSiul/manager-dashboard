@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Vendas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/form.css">
+</head>
+<body>
+    <section class="form-container">
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="spreadsheetUrl">URL da Planilha:</label>
+                <input type="url" id="spreadsheetUrl" name="spreadsheetUrl" placeholder="Insira a URL da planilha" required>
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key:</label>
+                <input type="text" id="apiKey" name="apiKey" placeholder="Insira sua API Key" required>
+            </div>
+            <div class="form-group">
+                <label for="sugestKey">json with sugestions</label>
+                <input type="text" id="sugestKey" name="sugestKey" placeholder="Insira sua sugestKey " required>
+            </div>
+            <button type="submit">Gerar</button>
+        </form>
+    </section>
+    
+    <main role="main">
+        <header>
+            <h1>Dashboard de Vendas</h1>
+        </header> 
+
+        <nav class="filters" id="filtersContainer">
+        </nav>
+
+        <section class="kpis">
+            <article class="kpi-card" title="Total de Vendas realizadas no período selecionado.">
+                <h2>Total de Vendas</h2>
+                <p id="totalSales">R$ 0,00</p>
+                <div class="tooltip">Total de Vendas realizadas no período selecionado.</div>
+            </article>
+            <article class="kpi-card" title="Ticket médio das vendas no período selecionado.">
+                <h2>Ticket Médio</h2>
+                <p id="averageTicket">R$ 0,00</p>
+                <div class="tooltip">Ticket médio das vendas no período selecionado.</div>
+            </article>
+            <article class="kpi-card" title="Número total de pedidos realizados no período selecionado.">
+                <h2>Total de Pedidos</h2>
+                <p id="totalOrders">0</p>
+                <div class="tooltip">Número total de pedidos realizados no período selecionado.</div>
+            </article>
+        </section>
+
+        <section class="charts">
+            <div class="chart-container" id="salesByRegionContainer">
+                <canvas id="salesByRegionChart"></canvas>
+                <div class="tooltip">Meu queridinho</div>
+            </div>
+            
+        </section>
+
+        <section>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <!-- Cabeçalhos serão gerados dinamicamente -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableContent">
+                        <!-- Dados da tabela serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- como vem os dados desse pagination ???-->
+        <section class="pagination" id="pagination">
+            <!-- Botões de paginação serão adicionados aqui -->
+        </section>
+
+        <button id="exportButton">Exportar Dados</button>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
