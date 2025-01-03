@@ -349,23 +349,19 @@ function updatePagination() {
 //exporttar via csv.(passar mappedKey parara csvData.push)
 document.getElementById("exportButton").addEventListener("click", () => {
     const csvData = [];
-    csvData.push(["ID Pedido", "Produto", "Marca", "Quantidade", "Preço de Venda", "Subtotal"]);
+    csvData.push(mappedKeys);  
     filteredData.forEach(item => {
-        csvData.push([
-            item.ID_PEDIDO,
-            item.PRODUTO,
-            item.MARCA,
-            item.QUANTIDADE,
-            item.PRECO_VENDA,
-            item.SUBTOTAL
-        ]);
+        const row = mappedKeys.map(key => item[key]);
+        csvData.push(row);
     });
+
     const csvContent = "data:text/csv;charset=utf-8," 
         + csvData.map(e => e.join(",")).join("\n");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "dados_vendas.csv");
+    link.setAttribute("download", "data.csv");
     document.body.appendChild(link);
     link.click();
 
