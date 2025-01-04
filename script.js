@@ -11,7 +11,7 @@ const colorPalette = [
 
 let mockData = []; 
 let mappedKeys = []
-let filteredData = [...mockData];
+let filterdDaeta = [...mockData];
 let appliedFilters = { regions: [], stores: [], groups: [], subgroups: [], brands: [], sellers: [] };
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -247,8 +247,14 @@ function assignColors(items, colorMap) {
 // html coringa:     const ctxRegion = document.getElementById("salesByRegionChart").getContext("2d");
 
 function updateCharts() {
-  
+    // mando ['x', 'y', 'z']
+    // o retorno desse get será inserido em newChartData no formato JSON. 
+    // o data dele tem que ser o data dessa variavel all_Data_mocked;
+
+    
     const newChartData = JSON.parse(localStorage.getItem('sugestKey'));
+    const all_data_mocked = filteredData; 
+    console.log("esses dados existem aqui", all_data_mocked)
     if (newChartData) {
         const { labels, datasets, options } = newChartData;
         console.log("Essas coisas existem? ", labels, datasets, options);
